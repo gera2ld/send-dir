@@ -1,0 +1,21 @@
+{
+  "name": "send-dir",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "bin": {
+    "send-dir": "index.js"
+  },
+  "dependencies": {
+    "cac": "^6.7.1",
+    "chalk": "^4.1.0",
+    "execa": "^5.0.0",
+    "koa": "^2.13.1",
+    "portfinder": "^1.0.28"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": "Gerald <gera2ld@live.com>"
+}

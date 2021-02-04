@@ -1,3 +1,5 @@
+#!/bin/env node
+
 const fs = require('fs');
 const { createSocket } = require('dgram');
 const { promisify } = require('util');
@@ -6,6 +8,8 @@ const portfinder = require('portfinder');
 const execa = require('execa');
 const cli = require('cac')();
 const chalk = require('chalk');
+
+const fsPromises = fs.promises;
 
 cli.command('<source_dir> <target_dir>', 'Send directory via direct HTTP').action(handleSend);
 cli.help();
@@ -41,7 +45,7 @@ async function getPrivateIpForFamily(family = 4) {
 }
 
 async function handleSend(sourceDir, targetDir) {
-  const stat = sourceDir && await fs.promises.stat(sourceDir);
+  const stat = sourceDir && await fsPromises.stat(sourceDir);
   if (!stat || !stat.isDirectory()) {
     console.error(`A source directory is required but got: ${sourceDir || '<null>'}`);
     process.exit(1);
@@ -71,7 +75,8 @@ async function handleSend(sourceDir, targetDir) {
   });
 
   function handleEnd() {
-    server.close();
     console.log(chalk.yellow('Directory sent successfully'));
+    server.close();
+    fsPromises.rm(bundlePath);
   }
 }

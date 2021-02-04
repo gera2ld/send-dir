@@ -9,6 +9,7 @@
   "dependencies": {
     "cac": "^6.7.1",
     "chalk": "^4.1.0",
+    "clipboardy": "^2.3.0",
     "execa": "^5.0.0",
     "koa": "^2.13.1",
     "portfinder": "^1.0.28"

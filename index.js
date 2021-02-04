@@ -8,6 +8,7 @@ const portfinder = require('portfinder');
 const execa = require('execa');
 const cli = require('cac')();
 const chalk = require('chalk');
+const clipboardy = require('clipboardy');
 
 const fsPromises = fs.promises;
 
@@ -55,23 +56,25 @@ async function handleSend(sourceDir, targetDir) {
   const ip = await getPrivateIpForFamily();
   const port = await portfinder.getPortPromise();
   const app = new Koa();
-  const shellScript = createShellScript(`http://${ip}:${port}`, targetDir);
   app.use(async (ctx, next) => {
     if (ctx.path === '/bundle.tgz') {
       const stream = fs.createReadStream(bundlePath);
       stream.on('end', handleEnd);
       ctx.body = stream;
     } else if (ctx.path === '/fetch.sh') {
+      const shellScript = createShellScript(`http://${ctx.host}`, targetDir);
       ctx.body = shellScript;
     }
   });
   const server = app.listen(port, () => {
+    const command = `curl -fsS http://${ip}:${port}/fetch.sh | sh`;
     console.log([
-      'Run the following command at your target machine:',
+      'Run the following command at your target machine (already copied to clipboard):',
       '',
-      chalk.green(`  curl -fsS http://${ip}:${port}/fetch.sh | sh`),
+      chalk.green(`  ${command}`),
       '',
     ].join('\n'));
+    clipboardy.write(command);
   });
 
   function handleEnd() {
